@@ -388,7 +388,7 @@ begin
 end;
 */
 
-/* Calcular aumento de salario */
+/* Calcular aumento de salario ----------------- ES UN EJEMPLO (no corre en esta bd) */
 DELIMITER $$
 
 create function AumentoSalario(salario decimal(10,2))
