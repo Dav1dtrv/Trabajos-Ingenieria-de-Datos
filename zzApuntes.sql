@@ -286,3 +286,124 @@ c.apellidoCliente1 as 'Apellido Cliente', m.nombreMascota as 'Nombre Mascota'
 from cliente c
 left join mascota m on c.documentoCliente=m.documentoClienteFK;
 select * from vistaClienteMascota;
+
+/* ------------------------------ Procedimientos ------------------------------ */
+
+/* Crear un procedimiento
+
+DELIMITER $$
+create procedure nombreProcedimiento(parámetros)
+begin
+-- sentencias lógicas
+end $$
+DELIMITER;
+*/
+
+/* Inovar un procedimiento
+call nombreProcedimiento(argumentos)
+*/
+
+# Parámetros de entrada
+describe detallevacuna;
+
+
+DELIMITER $$
+create procedure MascotaPorVacuna(in idDetalleVacunaParam int)
+begin
+	select m.nombreMascota, m.raza from mascota m
+    inner join detallevacuna d on m.idMascota = d.idMascotaFK
+    where d.idDetalleVacuna = idDetalleVacunaParam;
+end $$
+DELIMITER ;
+
+call MascotaPorVacuna(4);
+
+# Reto 1. Procedimiento de entrada para consultar si algo existe y si no existe crearlo
+
+DELIMITER $$
+create procedure ConsultarRegistrarCliente(
+in p_documentoCliente varchar(50),
+in p_nombreCliente1 varchar(50),
+in p_nombreCliente2 varchar(50),
+in p_apellidoCliente1 varchar(50),
+in p_apellidoCliente2 varchar(50),
+in p_direccionCliente varchar(100))
+begin
+declare v_documento varchar(50);
+
+# Validar si el empleado existe
+select documentoCliente into v_documento from cliente 
+where documentoCliente=p_documentoCliente
+limit 1;
+
+#Si no existe registrar
+	if v_documento is null then
+		insert into cliente
+		values(p_documentoCliente, p_nombreCliente1, p_nombreCliente2, p_apellidoCliente1, 
+		p_apellidoCliente2, p_direccionCliente);
+		select 'Cliente registrado' as Mensaje;
+	else
+		select concat('El cliente ', p_nombreCliente1, ' ya está registrado') as Mensaje;
+        select * from cliente where documentoCliente=v_documento;
+end if;
+end $$
+DELIMITER ;
+
+call ConsultarRegistrarCliente("1021674890", "Alexander", " ", "Montoya", "Rojas", "Armenia");
+
+# Reto 2. Parámetro de salida que muestre el nombre de vacunas que ha recibido una mascota.
+DELIMITER $$
+create procedure NombreVacunaMascota(in p_idMascota int, out nombre_vacunas varchar(1000))
+begin 
+declare v_nombreVacuna varchar(100);
+declare v_nombreMascota varchar(50);
+
+select nombreMascota into v_nombreMascota from mascota where idMascota=p_idMascota;
+
+select
+v.nombreVacuna into v_nombreVacuna
+from detallevacuna dv
+inner join mascota m on dv.idMascotaFK = m.idMascota
+inner join vacuna v on dv.idVacunaFK = v.idVacuna
+where m.idMascota = p_idMascota;
+
+select concat('La mascota ', v_nombreMascota, ' tiene la vacuna ', v_nombreVacuna) into nombre_vacunas;
+end $$
+DELIMITER ;
+drop procedure nombrevacunamascota;
+
+call NombreVacunaMascota(3,@vacunas);
+
+select @vacunas;
+
+select * from mascota;
+
+/* ------------------ Funciones definidas por el usuario  ------------------ */
+/*
+create function nombreFuncion(parámetros)
+returns tipoDato
+begin
+	-- lógica de la función
+	return valor;
+end;
+*/
+
+/* Calcular aumento de salario */
+DELIMITER $$
+
+create function AumentoSalario(salario decimal(10,2))
+returns decimal(10,2)
+deterministic /* Cuando el valor que devuelve siempre es un mismo valor 
+					(así devuelve un aumento de salario y no 20) */
+begin
+	declare salarioNuevo decimal(10,2);
+    set salarioNuevo=salario*1.10;
+    return salarioNuevo;
+end $$
+DELIMITER ;
+
+
+
+
+
+
