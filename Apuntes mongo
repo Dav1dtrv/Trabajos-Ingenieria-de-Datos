@@ -1,0 +1,157 @@
+use musica
+
+db.bands.insertMany([
+  {
+    name: "bon jovi",
+    country: "estados unidos",
+    albums: [
+      {
+        title: "slippery when wet",
+        dateCreated: new Date(1986, 7, 18),
+        songs: [
+          { title: "you give love a bad name" },
+          { title: "livin on a prayer" },
+          { title: "wanted dead or alive" },
+          { title: "never say goodbye" },
+          { title: "raise your hands" }
+        ]
+      },
+      {
+        title: "new jersey",
+        dateCreated: new Date(1988, 9, 19),
+        songs: [
+          { title: "lay your hands on me" },
+          { title: "bad medicine" },
+          { title: "born to be my baby" },
+          { title: "ill be there for you" },
+          { title: "wild is the wind" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "queen",
+    country: "reino unido",
+    albums: [
+      {
+        title: "a night at the opera",
+        dateCreated: new Date(1975, 10, 21),
+        songs: [
+          { title: "bohemian rhapsody" },
+          { title: "love of my life" },
+          { title: "youre my best friend" },
+          { title: "im in love with my car" },
+          { title: "thirty nine" }
+        ]
+      },
+      {
+        title: "the works",
+        dateCreated: new Date(1984, 1, 27),
+        songs: [
+          { title: "radio ga ga" },
+          { title: "i want to break free" },
+          { title: "hammer to fall" },
+          { title: "its a hard life" },
+          { title: "tear it up" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "metallica",
+    country: "estados unidos",
+    albums: [
+      {
+        title: "ride the lightning",
+        dateCreated: new Date(1984, 7, 27),
+        songs: [
+          { title: "fight fire with fire" },
+          { title: "ride the lightning" },
+          { title: "for whom the bell tolls" },
+          { title: "fade to black" },
+          { title: "creeping death" }
+        ]
+      },
+      {
+        title: "master of puppets",
+        dateCreated: new Date(1986, 2, 3),
+        songs: [
+          { title: "battery" },
+          { title: "master of puppets" },
+          { title: "welcome home sanitarium" },
+          { title: "disposable heroes" },
+          { title: "damage inc" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "coldplay",
+    country: "reino unido",
+    albums: [
+      {
+        title: "parachutes",
+        dateCreated: new Date(2000, 6, 10),
+        songs: [
+          { title: "yellow" },
+          { title: "shiver" },
+          { title: "trouble" },
+          { title: "dont panic" },
+          { title: "everythings not lost" }
+        ]
+      },
+      {
+        title: "a rush of blood to the head",
+        dateCreated: new Date(2002, 7, 26),
+        songs: [
+          { title: "clocks" },
+          { title: "the scientist" },
+          { title: "in my place" },
+          { title: "god put a smile upon your face" },
+          { title: "amsterdam" }
+        ]
+      }
+    ]
+  },
+  {
+    name: "muse",
+    country: "reino unido",
+    albums: [
+      {
+        title: "absolution",
+        dateCreated: new Date(2003, 8, 15),
+        songs: [
+          { title: "time is running out" },
+          { title: "hysteria" },
+          { title: "sing for absolution" },
+          { title: "butterflies and hurricanes" },
+          { title: "falling away with you" }
+        ]
+      },
+      {
+        title: "black holes and revelations",
+        dateCreated: new Date(2006, 6, 3),
+        songs: [
+          { title: "starlight" },
+          { title: "supermassive black hole" },
+          { title: "map of the problematique" },
+          { title: "knights of cydonia" },
+          { title: "city of delusion" }
+        ]
+      }
+    ]
+  }
+])
+
+db.bands.find().pretty()
+
+db.bands.updateMany({}, { $unset: { "albums.$[].dateCreated": "" } })
+
+db.bands.find().pretty()
+
+db.bands.updateOne(
+  { name: "metallica", "albums.title": "ride the lightning" },
+  { $unset: { "albums.$.songs": "" } }
+)
+
+db.bands.find({ name: "metallica" }).pretty()
