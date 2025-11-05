@@ -1,0 +1,72 @@
+//Reto 1
+db.bands.insertMany([
+  {
+    name: "Avenged Sevenfold",
+    country: "Estados Unidos",
+    members: ["M. Shadows", "Synyster Gates", "Zacky Vengeance", "Johnny Christ", "Brooks Wackerman"],
+    albums: [
+      { title: "A Little Piece of Heaven", year: 2007, rating: 5, sales: 1500000 },
+      { title: "M.I.A.", year: 2005, rating: 4, sales: 1200000 }
+    ]
+  },
+  {
+    name: "System of a Down",
+    country: "Armenia / Estados Unidos",
+    members: ["Serj Tankian", "Daron Malakian", "Shavo Odadjian", "John Dolmayan"],
+    albums: [
+      { title: "Needles", year: 2001, rating: 5, sales: 2000000 },
+      { title: "Revenga", year: 2005, rating: 4, sales: 1800000 }
+    ]
+  },
+  {
+    name: "Måneskin",
+    country: "Italia",
+    members: ["Damiano David", "Victoria De Angelis", "Thomas Raggi", "Ethan Torchio"],
+    albums: [
+      { title: "La paura del buio", year: 2023, rating: 4, sales: 500000 },
+      { title: "L’altra dimensione", year: 2018, rating: 5, sales: 750000 }
+    ]
+  }
+])
+
+//Reto 2
+db.bands.aggregate([
+  {$unwind:"$albums"},
+  {$group:
+  {
+    _id:"$name",
+    albumCount:{$sum:1},
+    totalSales:{$sum:"$albums.sales"}
+  }
+  },
+  {$sort:{albumCount:-1}}
+    
+])
+
+//Reto 3
+db.bands.aggregate([
+  {$unwind:"$albums"},
+  {$project:{
+      _id:0,
+      name:1,
+      "albums.title":1,
+      "albums.sales":1
+  	}
+  },
+  {$sort:
+  	{sales:-1}
+  },
+  {$limit:2}
+])
+
+//Reto 4
+db.bands.aggregate([
+  {$unwind:"$albums"},
+  {
+    $group:{
+      _id:"$country",
+      rating:{$avg:"$albums.rating"}
+    }
+  },
+  {$sort:{rating:-1}}
+])
